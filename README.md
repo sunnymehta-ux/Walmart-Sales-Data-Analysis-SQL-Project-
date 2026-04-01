@@ -104,4 +104,3 @@ CREATE DATABASE salesdatawalmart;
 ## 👨‍💻 Author
 
 Sunny Mehta
-(Add your LinkedIn & GitHub link here)
