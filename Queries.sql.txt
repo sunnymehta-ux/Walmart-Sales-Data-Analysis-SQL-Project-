@@ -1,0 +1,111 @@
+-- -------------------------------------------------------------------Generic Query--------------------------------------------------------------------------------------------
+
+-- How many unique cities does the data have?
+SELECT DISTINCT
+    city
+FROM
+    Sales;
+-- In which city is each branch?
+SELECT DISTINCT
+    city, branch
+FROM
+    sales;
+
+-- -----------------------------------------------------------------PRODUCT-------------------------------------------------------------------------------------------------------
+-- How many unique product lines does the data have?
+SELECT DISTINCT
+    product_line
+FROM sales;
+
+-- What is the TOP 3 most selling product line?
+SELECT
+    product_line, COUNT(quantity) AS total_quantity
+FROM
+    sales
+GROUP BY product_line
+ORDER BY total_quantity desc limit 3;
+
+-- What product line had the largest revenue?
+SELECT 
+    product_line, SUM(total) AS total_revenue
+FROM
+    sales
+GROUP BY product_line
+ORDER BY total_revenue desc limit 1;
+
+-- What is the city with the largest revenue?
+SELECT 
+    city, SUM(total) AS total_revenue
+FROM
+    sales
+GROUP BY city
+ORDER BY total_revenue desc limit 1;
+
+-- What product line had the largest VAT?
+SELECT 
+    product_line, MAX(VAT) AS largest_VAT
+FROM
+    sales
+GROUP BY product_line
+ORDER BY largest_VAT desc limit 1;
+
+-- Fetch each product line and add a column to those product line showing "Good", "Bad". Good if its greater than average sales
+
+SELECT product_line, SUM(total) AS total_revenue,
+CASE 
+    WHEN SUM(total) > AVG(SUM(total)) OVER() THEN 'GOOD'
+    ELSE 'BAD'
+END AS Performance
+FROM
+Sales
+group by product_line;
+
+-- Which branch sold more products than average product sold?
+SELECT branch, SUM(quantity) AS Total_quantity,
+CASE
+   WHEN SUM(quantity) > AVG(SUM(quantity)) OVER() THEN 'YES'
+   ELSE 'NO'
+END AS Performance
+FROM sales
+GROUP BY branch
+ORDER BY branch;
+
+-- ----------------------------------------------------------SALES--------------------------------------------------------------------------------
+-- Number of sales made in each time of the day per weekday
+
+SELECT 
+    day_name, time_of_day, COUNT(*) AS total_sales
+FROM
+    sales
+GROUP BY 
+    day_name,
+    time_of_day
+ORDER BY 
+    FIELD(day_name, 'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'),
+   FIELD(time_of_day, 'Morning' , 'Afternoon', 'Evening');
+   
+   
+-- Which of the customer types brings the most revenue?
+SELECT 
+    customer_type, Round(SUM(total)) AS total_revenue
+FROM
+    sales
+GROUP BY customer_type
+ORDER BY total_revenue;
+
+-- What is the most common payment method?
+SELECT 
+    payment_method, COUNT(*) AS Total_trans
+FROM
+    sales
+GROUP BY payment_method
+ORDER BY Total_trans DESC;
+
+-- --------------------------------------------------------------CUSTOMERS----------------------------------------------------------------------------
+
+-- Which time of the day do customers give most ratings?
+SELECT 
+    time_of_day, COUNT(rating) AS total_ratings
+FROM
+    sales
+GROUP BY time_of_day;
